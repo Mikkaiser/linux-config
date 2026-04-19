@@ -22,6 +22,28 @@ backup_and_link() {
   echo "  linked:    $dest"
 }
 
+install_supabase_cli() {
+  if command -v supabase &>/dev/null; then
+    echo "  supabase CLI already installed ($(supabase --version))"
+    return
+  fi
+
+  echo "  installing supabase CLI..."
+  if command -v brew &>/dev/null; then
+    brew install supabase/tap/supabase
+  elif command -v npm &>/dev/null; then
+    npm install -g supabase
+  else
+    curl -fsSL https://supabase.com/install.sh | sh
+  fi
+  echo "  supabase CLI installed ($(supabase --version))"
+}
+
+echo "==> Installing packages"
+echo ""
+install_supabase_cli
+echo ""
+
 echo "==> Symlinking dotfiles from $DOTFILES_DIR"
 echo "==> Backups (if any) will go to $BACKUP_DIR"
 echo ""
