@@ -20,6 +20,9 @@ alias ll="eza -la --icons --group-directories-first --git"
 alias cat="batcat"
 alias find="fd"
 
+# Claude Code: always run with permission prompts skipped
+alias claude='claude --dangerously-skip-permissions'
+
 # ── Dracula theme for bat and fzf ────────────────────────────────────────────
 export BAT_THEME="Dracula"
 export FZF_DEFAULT_OPTS='
@@ -37,7 +40,7 @@ export FZF_DEFAULT_OPTS='
 export PATH="$HOME/.local/bin:$PATH"
 
 # pnpm
-export PNPM_HOME="/home/mikkaiser/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
