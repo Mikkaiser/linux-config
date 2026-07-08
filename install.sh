@@ -29,10 +29,7 @@ install_browser_deps() {
     libatk-bridge2.0-0 libatspi2.0-0 \
     libgtk-3-0 libgbm1 libasound2t64 \
     libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
-    libpango-1.0-0 libcairo2 libxkbcommon0 \
-    chromium-browser 2>/dev/null \
-    || sudo apt-get install -y chromium 2>/dev/null \
-    || echo "  warning: could not install chromium — install manually"
+    libpango-1.0-0 libcairo2 libxkbcommon0
   echo "  browser deps installed"
 }
 
