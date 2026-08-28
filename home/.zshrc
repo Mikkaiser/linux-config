@@ -50,3 +50,46 @@ esac
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# ── JetBrains Toolbox scripts (WSL) ──────────────────────────────────────────
+export PATH="/mnt/c/Users/mikae/AppData/Local/JetBrains/Toolbox/scripts:$PATH"
+
+# ── git identity shortcuts: `git config Mikkaiser` / `git config Autege` ────
+git() {
+  if [[ "$1" == "config" && -n "$2" && -z "$3" ]]; then
+    case "$2" in
+      Mikkaiser)
+        command git config user.name "Mikkaiser" && \
+        command git config user.email "mikaelrsimoes19@gmail.com"
+        return
+        ;;
+      Autege)
+        command git config user.name "Autege" && \
+        command git config user.email "support@autege.com"
+        return
+        ;;
+    esac
+  fi
+  command git "$@"
+}
+
+# ── WebStorm launcher (fixes WSL working-dir deadlock + relative paths) ─────
+webstorm() {
+  local args=() arg
+  for arg in "$@"; do
+    if [[ -e "$arg" ]]; then
+      args+=("$(wslpath -w "${arg:A}")")
+    else
+      args+=("$arg")
+    fi
+  done
+  local -a matches
+  matches=( "/mnt/c/Program Files/JetBrains/WebStorm "*/bin/webstorm64.exe(N) )
+  if (( ${#matches} == 0 )); then
+    echo "webstorm: no WebStorm install found under /mnt/c/Program Files/JetBrains/" >&2
+    return 1
+  fi
+  local exe
+  exe=$(printf '%s\n' "${matches[@]}" | sort -V | tail -n 1)
+  (cd /mnt/c && "$exe" "${args[@]}" &) >/dev/null 2>&1
+}
