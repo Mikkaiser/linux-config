@@ -1,6 +1,6 @@
 # linux-config
 
-Personal dotfiles for a Linux/WSL2 environment. Includes zsh (Oh My Zsh + Powerlevel10k), tmux, git, and shell session files.
+Personal dotfiles for a Linux/WSL2 environment. Includes zsh (Oh My Zsh + Powerlevel10k), tmux, git, shell session files, and terminal fonts.
 
 ## Setup
 
@@ -11,7 +11,7 @@ chmod +x install.sh
 ./install.sh
 ```
 
-The script symlinks every config file to its correct location in `$HOME`. Any existing file that would be overwritten is backed up first to `~/.dotfiles-backup/<timestamp>/`.
+The script installs packages (browser runtime deps, Supabase CLI, JetBrains Mono), then symlinks every config file to its correct location in `$HOME`. Any existing file that would be overwritten is backed up first to `~/.dotfiles-backup/<timestamp>/`.
 
 ## Layout
 
@@ -25,6 +25,37 @@ home/
   .tmux.conf
   .zshrc
 ```
+
+## Fonts
+
+`install.sh` installs the full JetBrains Mono family (16 weights, ligature cuts) into
+`~/.local/share/fonts/JetBrainsMono/` and refreshes the fontconfig cache.
+
+**On WSL this is only half the job.** Windows Terminal renders on the Windows side, so it never sees
+fonts installed inside WSL. Install the same family on Windows as well — open the `.ttf` files and
+click *Install*, or drop them in `%LOCALAPPDATA%\Microsoft\Windows\Fonts`.
+
+Then set the font for every profile at once, in Windows Terminal's `settings.json`
+(`%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`):
+
+```json
+"profiles": {
+    "defaults": {
+        "font": {
+            "face": "JetBrains Mono",
+            "size": 12,
+            "weight": "bold"
+        }
+    }
+}
+```
+
+Putting it under `profiles.defaults` rather than an individual profile means Ubuntu, PowerShell and
+Git Bash all pick it up. To disable the programming ligatures (`!=`, `=>`, `===`), add
+`"features": { "calt": 0, "liga": 0 }` alongside `face`.
+
+Note that only monospace fonts work here: Windows Terminal fits every glyph into an identical cell,
+so a proportional face collides with itself and becomes unreadable.
 
 ## Adding new dotfiles
 

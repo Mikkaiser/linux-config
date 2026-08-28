@@ -55,11 +55,49 @@ install_supabase_cli() {
   echo "  supabase CLI installed ($(supabase --version))"
 }
 
+install_fonts() {
+  local font_dir="$HOME/.local/share/fonts/JetBrainsMono"
+  local version="2.304"
+
+  if [ -d "$font_dir" ] && [ -n "$(ls -A "$font_dir" 2>/dev/null)" ]; then
+    echo "  JetBrains Mono already installed"
+    return
+  fi
+
+  if ! command -v fc-cache &>/dev/null; then
+    echo "  installing fontconfig..."
+    sudo apt-get install -y fontconfig
+  fi
+
+  echo "  installing JetBrains Mono ${version}..."
+  local tmp
+  tmp=$(mktemp -d)
+  wget -q -O "$tmp/JetBrainsMono.zip" \
+    "https://github.com/JetBrains/JetBrainsMono/releases/download/v${version}/JetBrainsMono-${version}.zip"
+
+  if command -v unzip &>/dev/null; then
+    unzip -q "$tmp/JetBrainsMono.zip" -d "$tmp/extracted"
+  else
+    python3 -m zipfile -e "$tmp/JetBrainsMono.zip" "$tmp/extracted"
+  fi
+
+  # Ligature variants only; the NL (no-ligature) cuts are skipped.
+  mkdir -p "$font_dir"
+  find "$tmp/extracted" -name 'JetBrainsMono-*.ttf' ! -name '*NL*' -exec cp {} "$font_dir/" \;
+  chmod 644 "$font_dir"/*.ttf
+  rm -rf "$tmp"
+
+  fc-cache -f "$HOME/.local/share/fonts" >/dev/null
+  echo "  JetBrains Mono installed ($(ls "$font_dir" | wc -l) weights)"
+}
+
 echo "==> Installing packages"
 echo ""
 install_browser_deps
 echo ""
 install_supabase_cli
+echo ""
+install_fonts
 echo ""
 
 echo "==> Symlinking dotfiles from $DOTFILES_DIR"
