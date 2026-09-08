@@ -13,6 +13,7 @@ return {
       "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
     },
+    lazy = false, -- must be loaded at startup to intercept a directory argument
     keys = {
       { "<leader>e", "<cmd>Neotree toggle<CR>", desc = "Toggle file explorer" },
     },
@@ -25,6 +26,9 @@ return {
         },
       },
       filesystem = {
+        -- Take over netrw so `nvim .` (and `dev`) opens the tree rather than
+        -- the raw netrw directory listing.
+        hijack_netrw_behavior = "open_current",
         follow_current_file = { enabled = true },
         use_libuv_file_watcher = true,
         filtered_items = { hide_dotfiles = false, hide_gitignored = true },
