@@ -55,6 +55,23 @@ install_supabase_cli() {
   echo "  supabase CLI installed ($(supabase --version))"
 }
 
+install_editor() {
+  local pkgs=()
+  command -v nvim    &>/dev/null || pkgs+=(neovim)
+  command -v wl-copy &>/dev/null || pkgs+=(wl-clipboard)
+  command -v unzip   &>/dev/null || pkgs+=(unzip)
+  # Treesitter parsers and some LSP servers are compiled on install.
+  command -v cc      &>/dev/null || pkgs+=(build-essential)
+
+  if [ ${#pkgs[@]} -eq 0 ]; then
+    echo "  editor toolchain already installed"
+  else
+    echo "  installing: ${pkgs[*]}"
+    sudo apt-get install -y "${pkgs[@]}"
+  fi
+  echo "  editor toolchain ready ($(nvim --version | head -1))"
+}
+
 install_fonts() {
   local font_dir="$HOME/.local/share/fonts/JetBrainsMono"
   local version="2.304"
@@ -99,6 +116,8 @@ install_supabase_cli
 echo ""
 install_fonts
 echo ""
+install_editor
+echo ""
 
 echo "==> Symlinking dotfiles from $DOTFILES_DIR"
 echo "==> Backups (if any) will go to $BACKUP_DIR"
@@ -111,6 +130,8 @@ backup_and_link "$DOTFILES_DIR/home/.gitconfig"  "$HOME/.gitconfig"
 backup_and_link "$DOTFILES_DIR/home/.tmux.conf"  "$HOME/.tmux.conf"
 backup_and_link "$DOTFILES_DIR/home/.profile"    "$HOME/.profile"
 backup_and_link "$DOTFILES_DIR/home/.bash_logout" "$HOME/.bash_logout"
+backup_and_link "$DOTFILES_DIR/home/.config/nvim"  "$HOME/.config/nvim"
+backup_and_link "$DOTFILES_DIR/home/.local/bin/dev" "$HOME/.local/bin/dev"
 
 echo ""
 echo "Done. Restart your shell or run: source ~/.zshrc"
