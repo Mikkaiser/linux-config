@@ -27,8 +27,9 @@ return {
       },
       filesystem = {
         -- Take over netrw so `nvim .` (and `dev`) opens the tree rather than
-        -- the raw netrw directory listing.
-        hijack_netrw_behavior = "open_current",
+        -- the raw netrw directory listing. "open_default" puts it in the left
+        -- sidebar, so files open *beside* the tree instead of replacing it.
+        hijack_netrw_behavior = "open_default",
         follow_current_file = { enabled = true },
         use_libuv_file_watcher = true,
         filtered_items = { hide_dotfiles = false, hide_gitignored = true },

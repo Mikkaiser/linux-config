@@ -39,6 +39,10 @@ export FZF_DEFAULT_OPTS='
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 export PATH="$HOME/.local/bin:$PATH"
 
+# Disable terminal flow control. By default Ctrl+S sends XOFF and freezes the
+# terminal until Ctrl+Q; turning it off frees the key for "save" in Neovim.
+[[ -t 0 ]] && stty -ixon
+
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
