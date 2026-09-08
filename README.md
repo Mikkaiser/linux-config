@@ -32,7 +32,31 @@ home/
   .local/bin/dev         tmux session launcher
 windows/
   windows-terminal-settings.json   Windows Terminal profile, Glass theme, font
+fonts/
+  JetBrainsMonoNF/       JetBrainsMono Nerd Font, 8 faces (via Git LFS)
 ```
+
+## Git LFS
+
+The fonts under `fonts/` are stored with [Git LFS](https://git-lfs.com), so the
+repository holds small pointer files and the 20 MB of binaries live outside the
+commit history.
+
+**Install git-lfs before cloning**, or the fonts arrive as ~130-byte text
+pointers instead of real files:
+
+```bash
+sudo apt-get install -y git-lfs
+git lfs install
+```
+
+Already cloned without it? Install git-lfs and run `git lfs pull`. `install.sh`
+detects unresolved pointers by file size, tries `git lfs pull` itself, and falls
+back to downloading the fonts from the upstream Nerd Fonts release, so a
+git-lfs-less machine still ends up with working icons.
+
+The LFS filter configuration lives in `home/.gitconfig`, so it travels with the
+dotfiles.
 
 ## Windows Terminal
 
@@ -152,8 +176,9 @@ Neovim half. Crossing the edge of the last split lands in the neighbouring pane.
 ## Fonts
 
 `install.sh` installs the full JetBrains Mono family (16 weights, ligature cuts) into
-`~/.local/share/fonts/JetBrainsMono/`, plus **JetBrainsMono Nerd Font** into
-`~/.local/share/fonts/JetBrainsMonoNF/`, and refreshes the fontconfig cache.
+`~/.local/share/fonts/JetBrainsMono/` by download, and **JetBrainsMono Nerd Font**
+into `~/.local/share/fonts/JetBrainsMonoNF/` from the copy committed under
+`fonts/` — then refreshes the fontconfig cache.
 
 The Nerd Font is not optional. Every icon in the file tree, statusline and git
 gutter is a glyph from the Nerd Font private-use range; plain JetBrains Mono does

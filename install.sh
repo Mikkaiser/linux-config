@@ -74,6 +74,7 @@ install_editor() {
 
 install_nerd_font() {
   local font_dir="$HOME/.local/share/fonts/JetBrainsMonoNF"
+  local src="$DOTFILES_DIR/fonts/JetBrainsMonoNF"
 
   if [ -d "$font_dir" ] && [ -n "$(ls -A "$font_dir" 2>/dev/null)" ]; then
     echo "  JetBrainsMono Nerd Font already installed"
@@ -82,31 +83,54 @@ install_nerd_font() {
 
   # The file-tree, statusline and git icons are Nerd Font glyphs. Plain
   # JetBrains Mono does not contain them, so they render as blank boxes.
-  echo "  installing JetBrainsMono Nerd Font..."
-  local version tmp
-  version=$(curl -fsSL https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest \
-    | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
-  tmp=$(mktemp -d)
-  curl -fsSL -o "$tmp/JetBrainsMono.zip" \
-    "https://github.com/ryanoasis/nerd-fonts/releases/download/${version}/JetBrainsMono.zip"
-
-  if command -v unzip &>/dev/null; then
-    unzip -q "$tmp/JetBrainsMono.zip" -d "$tmp/extracted"
-  else
-    python3 -m zipfile -e "$tmp/JetBrainsMono.zip" "$tmp/extracted"
+  #
+  # The fonts are committed to this repo through Git LFS. Without git-lfs
+  # installed, a clone leaves ~130-byte pointer files in their place instead of
+  # the real fonts, so check the size before trusting them.
+  local have_real_fonts=false
+  if [ -f "$src/JetBrainsMonoNerdFontMono-Regular.ttf" ]; then
+    local size
+    size=$(stat -c%s "$src/JetBrainsMonoNerdFontMono-Regular.ttf")
+    if [ "$size" -gt 100000 ]; then
+      have_real_fonts=true
+    else
+      echo "  fonts in repo are unresolved LFS pointers (git-lfs missing?)"
+      if command -v git-lfs &>/dev/null; then
+        echo "  fetching them with git lfs pull..."
+        (cd "$DOTFILES_DIR" && git lfs pull) && have_real_fonts=true
+      fi
+    fi
   fi
 
   mkdir -p "$font_dir"
-  local f
-  for f in Regular Bold Italic BoldItalic; do
-    cp "$tmp/extracted/JetBrainsMonoNerdFont-$f.ttf"     "$font_dir/" 2>/dev/null || true
-    cp "$tmp/extracted/JetBrainsMonoNerdFontMono-$f.ttf" "$font_dir/" 2>/dev/null || true
-  done
-  chmod 644 "$font_dir"/*.ttf
-  rm -rf "$tmp"
 
+  if [ "$have_real_fonts" = true ]; then
+    echo "  installing JetBrainsMono Nerd Font from the repo..."
+    cp "$src"/*.ttf "$font_dir/"
+  else
+    echo "  falling back to downloading JetBrainsMono Nerd Font..."
+    local version tmp
+    version=$(curl -fsSL https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest \
+      | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
+    tmp=$(mktemp -d)
+    curl -fsSL -o "$tmp/JetBrainsMono.zip" \
+      "https://github.com/ryanoasis/nerd-fonts/releases/download/${version}/JetBrainsMono.zip"
+    if command -v unzip &>/dev/null; then
+      unzip -q "$tmp/JetBrainsMono.zip" -d "$tmp/extracted"
+    else
+      python3 -m zipfile -e "$tmp/JetBrainsMono.zip" "$tmp/extracted"
+    fi
+    local f
+    for f in Regular Bold Italic BoldItalic; do
+      cp "$tmp/extracted/JetBrainsMonoNerdFont-$f.ttf"     "$font_dir/" 2>/dev/null || true
+      cp "$tmp/extracted/JetBrainsMonoNerdFontMono-$f.ttf" "$font_dir/" 2>/dev/null || true
+    done
+    rm -rf "$tmp"
+  fi
+
+  chmod 644 "$font_dir"/*.ttf
   fc-cache -f "$HOME/.local/share/fonts" >/dev/null
-  echo "  JetBrainsMono Nerd Font installed ($version)"
+  echo "  JetBrainsMono Nerd Font installed ($(ls "$font_dir" | wc -l) faces)"
   echo "  NOTE: on WSL you must also install it on the Windows side and set the"
   echo "        Windows Terminal font face to 'JetBrainsMono NFM' -- see README."
 }
