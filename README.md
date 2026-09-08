@@ -30,7 +30,34 @@ home/
     lua/config/          options, keymaps
     lua/plugins/         one file per concern
   .local/bin/dev         tmux session launcher
+windows/
+  windows-terminal-settings.json   Windows Terminal profile, Glass theme, font
 ```
+
+## Windows Terminal
+
+`windows/windows-terminal-settings.json` is a copy of the Windows-side config —
+it cannot be symlinked, because Windows Terminal rewrites the file in place when
+you change a setting in its UI. Copy it over manually:
+
+```powershell
+copy windows-terminal-settings.json `
+  "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
+```
+
+What it sets:
+
+| Setting | Value | Why |
+| --- | --- | --- |
+| `theme` | `Glass` | custom theme, defined in the same file |
+| `tabRow.background` | `terminalBackground` | the title bar reuses the terminal's own acrylic, so the seam disappears |
+| `tab.background` | `#00000000` | transparent tabs, no solid chip and no active-tab highlight |
+| `opacity` / `useAcrylic` | `25` / `true` | on `profiles.defaults`, not per profile |
+| `font.face` | `JetBrainsMono NFM` | Nerd Font cut, single-width icons |
+
+Opacity and font live on `profiles.defaults` deliberately. `terminalBackground`
+resolves against the *active* profile, so if only the WSL profiles carried them,
+switching to PowerShell would snap the title bar opaque.
 
 ## Terminal IDE
 
