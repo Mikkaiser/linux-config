@@ -78,6 +78,10 @@ return {
   {
     -- Syntax highlighting and indentation that actually understands the code.
     "nvim-treesitter/nvim-treesitter",
+    -- Pinned to master. The default branch is now the `main` rewrite, which
+    -- drops the nvim-treesitter.configs module this setup uses; master keeps
+    -- ensure_installed/auto_install and is the stable API on 0.11.
+    branch = "master",
     build = ":TSUpdate",
     event = { "BufReadPost", "BufNewFile" },
     main = "nvim-treesitter.configs",
