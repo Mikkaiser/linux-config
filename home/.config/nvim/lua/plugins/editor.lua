@@ -5,7 +5,9 @@
 return {
   {
     -- File explorer. Single-click opens files, drag to resize, right-click for
-    -- a full context menu (add / rename / delete).
+    -- a full context menu (add / rename / delete). The winbar at the top of the
+    -- panel switches between Files, Buffers and Git, the way VS Code's activity
+    -- bar does.
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
     dependencies = {
@@ -15,16 +17,75 @@ return {
     },
     lazy = false, -- must be loaded at startup to intercept a directory argument
     keys = {
-      { "<leader>e", "<cmd>Neotree toggle<CR>", desc = "Toggle file explorer" },
+      { "<leader>e", "<cmd>Neotree toggle<CR>",                   desc = "Toggle file explorer" },
+      { "<C-b>",     "<cmd>Neotree toggle<CR>",                   desc = "Toggle sidebar" },
+      { "<leader>g", "<cmd>Neotree git_status left<CR>",          desc = "Git changes panel" },
+      { "<leader>bb","<cmd>Neotree buffers left<CR>",             desc = "Open buffers panel" },
     },
     opts = {
       close_if_last_window = true,
-      window = {
-        width = 32,
-        mappings = {
-          ["<space>"] = "none", -- keep space free as the leader key
+      popup_border_style = "rounded",
+      enable_git_status = true,
+      enable_diagnostics = true,
+
+      -- The panel header: click a tab to switch source.
+      source_selector = {
+        winbar = true,
+        content_layout = "center",
+        sources = {
+          { source = "filesystem", display_name = "  Files" },
+          { source = "buffers",    display_name = "  Buffers" },
+          { source = "git_status", display_name = "  Git" },
         },
       },
+
+      default_component_configs = {
+        indent = {
+          with_expanders = true,      -- arrows on folders, like every GUI tree
+          expander_collapsed = "",
+          expander_expanded = "",
+          expander_highlight = "NeoTreeExpander",
+        },
+        icon = {
+          folder_closed = "",
+          folder_open   = "",
+          folder_empty  = "",
+          default       = "",
+        },
+        git_status = {
+          symbols = {
+            added     = "",
+            modified  = "",
+            deleted   = "",
+            renamed   = "",
+            untracked = "",
+            ignored   = "",
+            unstaged  = "",
+            staged    = "",
+            conflict  = "",
+          },
+        },
+      },
+
+      window = {
+        width = 34,
+        mappings = {
+          ["<space>"] = "none",       -- keep space free as the leader key
+          ["<2-LeftMouse>"] = "open", -- double-click opens
+          ["<cr>"]    = "open",
+          ["l"]       = "open",
+          ["h"]       = "close_node",
+          ["a"]       = { "add", config = { show_path = "relative" } },
+          ["d"]       = "delete",
+          ["r"]       = "rename",
+          ["c"]       = "copy",
+          ["x"]       = "cut_to_clipboard",
+          ["p"]       = "paste_from_clipboard",
+          ["R"]       = "refresh",
+          ["?"]       = "show_help",
+        },
+      },
+
       filesystem = {
         -- Take over netrw so `nvim .` (and `dev`) opens the tree rather than
         -- the raw netrw directory listing. "open_default" puts it in the left
@@ -32,7 +93,11 @@ return {
         hijack_netrw_behavior = "open_default",
         follow_current_file = { enabled = true },
         use_libuv_file_watcher = true,
-        filtered_items = { hide_dotfiles = false, hide_gitignored = true },
+        filtered_items = {
+          hide_dotfiles = false,
+          hide_gitignored = true,
+          never_show = { ".git", ".DS_Store" },
+        },
       },
     },
   },
@@ -56,27 +121,6 @@ return {
         layout_config = { prompt_position = "top" },
         sorting_strategy = "ascending",
       },
-    },
-  },
-
-  {
-    -- Git signs in the gutter, inline blame, stage/reset a hunk.
-    "lewis6991/gitsigns.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    opts = {
-      current_line_blame = true,
-      current_line_blame_opts = { delay = 400, virt_text_pos = "eol" },
-      on_attach = function(buf)
-        local gs = require("gitsigns")
-        local function map(mode, lhs, rhs, desc)
-          vim.keymap.set(mode, lhs, rhs, { buffer = buf, desc = desc })
-        end
-        map("n", "]h", gs.next_hunk, "Next git hunk")
-        map("n", "[h", gs.prev_hunk, "Previous git hunk")
-        map("n", "<leader>gs", gs.stage_hunk, "Stage hunk")
-        map("n", "<leader>gr", gs.reset_hunk, "Reset hunk")
-        map("n", "<leader>gp", gs.preview_hunk, "Preview hunk")
-      end,
     },
   },
 

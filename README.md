@@ -70,6 +70,38 @@ It is pure Lua, so no Node runtime is required.
 Leader is `Space`. `<leader>e` toggles the file tree, `<leader>ff` finds files and
 `<leader>fg` greps the project. Pause after any prefix and which-key lists the rest.
 
+### Panels
+
+The sidebar header has three tabs, clickable like VS Code's activity bar:
+
+| Tab | What it shows |
+| --- | --- |
+| **Files** | the project tree |
+| **Buffers** | everything currently open |
+| **Git** | changed files, the Source Control equivalent |
+
+`<leader>e` or `Ctrl+B` toggles the sidebar, `<leader>g` jumps straight to Git.
+Gutter marks and inline blame come from gitsigns; `<leader>gp` previews a hunk,
+`<leader>gd` opens a full side-by-side diff, `<leader>gh` the file's history.
+
+### Integrated terminal
+
+`Ctrl+\` toggles a terminal inside the Neovim window, separate from the tmux
+pane next door. `<leader>tf` opens it floating and `<leader>tv` at the side.
+Terminal mode captures every key, so `Esc` goes to the shell — press `Ctrl+\`
+again to dismiss it, or `Ctrl+\ Ctrl+n` for normal mode.
+
+### Windows and splits
+
+`<leader>|` and `<leader>-` split; `Alt+h/j/k/l` resize; `<leader>mh/mj/mk/ml`
+move a split to an edge and `<leader>m=` equalises. Buffer tabs reorder with
+`<leader>b,` and `<leader>b.`.
+
+Dragging a split *border* with the mouse resizes it. Dragging a split or a tab to
+rearrange the layout, as in VS Code, is not possible — terminal Neovim receives
+mouse events but has no drag-to-rearrange model for windows. The keybindings
+above are the equivalent.
+
 ### Mouse
 
 The mouse works throughout: click to place the cursor or focus a pane, drag split
@@ -91,11 +123,20 @@ Neovim half. Crossing the edge of the last split lands in the neighbouring pane.
 ## Fonts
 
 `install.sh` installs the full JetBrains Mono family (16 weights, ligature cuts) into
-`~/.local/share/fonts/JetBrainsMono/` and refreshes the fontconfig cache.
+`~/.local/share/fonts/JetBrainsMono/`, plus **JetBrainsMono Nerd Font** into
+`~/.local/share/fonts/JetBrainsMonoNF/`, and refreshes the fontconfig cache.
+
+The Nerd Font is not optional. Every icon in the file tree, statusline and git
+gutter is a glyph from the Nerd Font private-use range; plain JetBrains Mono does
+not contain them, so folders and files render as identical blank boxes. Use the
+`NFM` ("Nerd Font Mono") cut in a terminal -- its icons are squeezed to a single
+cell, so they line up with the character grid instead of overlapping.
 
 **On WSL this is only half the job.** Windows Terminal renders on the Windows side, so it never sees
 fonts installed inside WSL. Install the same family on Windows as well — open the `.ttf` files and
-click *Install*, or drop them in `%LOCALAPPDATA%\Microsoft\Windows\Fonts`.
+click *Install*, or copy them to `%LOCALAPPDATA%\Microsoft\Windows\Fonts` and register each one under
+`HKCU\Software\Microsoft\Windows NT\CurrentVersion\Fonts` (value name `<Full Font Name> (TrueType)`,
+data = the full path). A per-user font that is copied but not registered stays invisible to Windows.
 
 Then set the font for every profile at once, in Windows Terminal's `settings.json`
 (`%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`):
@@ -104,8 +145,8 @@ Then set the font for every profile at once, in Windows Terminal's `settings.jso
 "profiles": {
     "defaults": {
         "font": {
-            "face": "JetBrains Mono",
-            "size": 12,
+            "face": "JetBrainsMono NFM",
+            "size": 16,
             "weight": "bold"
         }
     }

@@ -44,8 +44,30 @@ map("v", "<C-_>", "<Plug>(comment_toggle_linewise_visual)", { desc = "Toggle com
 map("v", "<C-/>", "<Plug>(comment_toggle_linewise_visual)", { desc = "Toggle comment" })
 
 -- --- Close the current file: Ctrl+W -----------------------------------------
--- Vim's Ctrl+W window prefix is preserved as <leader>w-style splits instead.
-map("n", "<C-w>", "<cmd>bdelete<CR>", { desc = "Close buffer" })
+-- Bdelete (bufdelete.nvim) closes the file but leaves the split standing;
+-- plain :bdelete would tear the window down with it.
+map("n", "<C-w>", "<cmd>Bdelete<CR>", { desc = "Close file" })
+map("i", "<C-w>", "<Esc><cmd>Bdelete<CR>", { desc = "Close file" })
+
+-- --- Window management ------------------------------------------------------
+-- Terminal Neovim cannot drag split layouts with the mouse, so these are the
+-- keyboard equivalents. Dragging a *border* to resize does work with the mouse.
+map("n", "<A-h>", "<cmd>vertical resize -4<CR>", { desc = "Narrower" })
+map("n", "<A-l>", "<cmd>vertical resize +4<CR>", { desc = "Wider" })
+map("n", "<A-j>", "<cmd>resize -2<CR>",          { desc = "Shorter" })
+map("n", "<A-k>", "<cmd>resize +2<CR>",          { desc = "Taller" })
+
+-- Move the current split to the far edge, the closest thing to dragging a
+-- pane into a new position.
+map("n", "<leader>mh", "<C-w>H", { desc = "Move split left" })
+map("n", "<leader>mj", "<C-w>J", { desc = "Move split down" })
+map("n", "<leader>mk", "<C-w>K", { desc = "Move split up" })
+map("n", "<leader>ml", "<C-w>L", { desc = "Move split right" })
+map("n", "<leader>m=", "<C-w>=", { desc = "Equalise splits" })
+
+-- Reorder the buffer tabs across the top.
+map("n", "<leader>b,", "<cmd>BufferLineMovePrev<CR>", { desc = "Move tab left" })
+map("n", "<leader>b.", "<cmd>BufferLineMoveNext<CR>", { desc = "Move tab right" })
 
 -- --- Shift+Arrow selects, like every other editor ----------------------------
 map("n", "<S-Up>",    "v<Up>",    { desc = "Select up" })

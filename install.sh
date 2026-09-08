@@ -72,6 +72,45 @@ install_editor() {
   echo "  editor toolchain ready ($(nvim --version | head -1))"
 }
 
+install_nerd_font() {
+  local font_dir="$HOME/.local/share/fonts/JetBrainsMonoNF"
+
+  if [ -d "$font_dir" ] && [ -n "$(ls -A "$font_dir" 2>/dev/null)" ]; then
+    echo "  JetBrainsMono Nerd Font already installed"
+    return
+  fi
+
+  # The file-tree, statusline and git icons are Nerd Font glyphs. Plain
+  # JetBrains Mono does not contain them, so they render as blank boxes.
+  echo "  installing JetBrainsMono Nerd Font..."
+  local version tmp
+  version=$(curl -fsSL https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest \
+    | grep -o '"tag_name": "[^"]*"' | head -1 | cut -d'"' -f4)
+  tmp=$(mktemp -d)
+  curl -fsSL -o "$tmp/JetBrainsMono.zip" \
+    "https://github.com/ryanoasis/nerd-fonts/releases/download/${version}/JetBrainsMono.zip"
+
+  if command -v unzip &>/dev/null; then
+    unzip -q "$tmp/JetBrainsMono.zip" -d "$tmp/extracted"
+  else
+    python3 -m zipfile -e "$tmp/JetBrainsMono.zip" "$tmp/extracted"
+  fi
+
+  mkdir -p "$font_dir"
+  local f
+  for f in Regular Bold Italic BoldItalic; do
+    cp "$tmp/extracted/JetBrainsMonoNerdFont-$f.ttf"     "$font_dir/" 2>/dev/null || true
+    cp "$tmp/extracted/JetBrainsMonoNerdFontMono-$f.ttf" "$font_dir/" 2>/dev/null || true
+  done
+  chmod 644 "$font_dir"/*.ttf
+  rm -rf "$tmp"
+
+  fc-cache -f "$HOME/.local/share/fonts" >/dev/null
+  echo "  JetBrainsMono Nerd Font installed ($version)"
+  echo "  NOTE: on WSL you must also install it on the Windows side and set the"
+  echo "        Windows Terminal font face to 'JetBrainsMono NFM' -- see README."
+}
+
 install_fonts() {
   local font_dir="$HOME/.local/share/fonts/JetBrainsMono"
   local version="2.304"
@@ -117,6 +156,8 @@ echo ""
 install_fonts
 echo ""
 install_editor
+echo ""
+install_nerd_font
 echo ""
 
 echo "==> Symlinking dotfiles from $DOTFILES_DIR"
