@@ -6,9 +6,9 @@
 #   dev ~/code/api open that directory
 #
 # Creates (or reattaches to) a tmux session named after the directory, laid out
-# as Neovim on the left and a shell on the right, with a second window holding
-# Claude Code. Reattaching never rebuilds the layout, so running it twice is
-# safe.
+# as Neovim on the left and Claude Code on the right, with a second window
+# holding a plain shell. Reattaching never rebuilds the layout, so running it
+# twice is safe.
 # =============================================================================
 set -euo pipefail
 
@@ -17,14 +17,14 @@ DIR="$(cd "${1:-$PWD}" && pwd)"
 SESSION="$(basename "$DIR" | tr '.:' '__')"
 
 if ! tmux has-session -t "=$SESSION" 2>/dev/null; then
-  # Window 1: editor on the left, shell on the right.
+  # Window 1: Neovim on the left, Claude Code on the right.
   tmux new-session -d -s "$SESSION" -c "$DIR" -n editor
   tmux send-keys -t "$SESSION:editor" 'nvim .' C-m
-  tmux split-window -h -t "$SESSION:editor" -c "$DIR" -p 35
+  tmux split-window -h -t "$SESSION:editor" -c "$DIR" -l 38%
+  tmux send-keys -t "$SESSION:editor" 'claude' C-m
 
-  # Window 2: Claude Code, full width for reading long output.
-  tmux new-window -t "$SESSION" -c "$DIR" -n claude
-  tmux send-keys -t "$SESSION:claude" 'claude' C-m
+  # Window 2: a plain shell for git, tests, whatever.
+  tmux new-window -t "$SESSION" -c "$DIR" -n shell
 
   tmux select-window -t "$SESSION:editor"
   tmux select-pane -t "$SESSION:editor.1"

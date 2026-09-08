@@ -43,9 +43,13 @@ dev ~/code/api   # open a specific project
 ```
 
 `dev` creates a tmux session named after the directory: an **editor** window with
-Neovim on the left and a shell on the right, plus a **claude** window running the
-CLI. Run it again on the same directory and it reattaches rather than rebuilding
-the layout.
+Neovim on the left and Claude Code on the right, plus a **shell** window for git,
+tests and everything else. Run it again on the same directory and it reattaches
+rather than rebuilding the layout.
+
+The right-hand pane is a plain CLI session. For the wired-up one, use
+`<leader>ac` from inside Neovim -- that connects over the lockfile protocol and
+is what makes selections, `@`-mentions and accept/reject diffs work.
 
 ### Claude Code integration
 
