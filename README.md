@@ -107,7 +107,9 @@ The sidebar header has three tabs, clickable like VS Code's activity bar:
 | **Buffers** | everything currently open |
 | **Git** | changed files, the Source Control equivalent |
 
-`<leader>e` or `Ctrl+B` toggles the sidebar, `<leader>g` jumps straight to Git.
+`<leader>e` or `Ctrl+B` toggles the sidebar and `<leader>E` focuses it without
+toggling — use `Ctrl+h` to step into it from the editor. `<leader>g` jumps
+straight to Git.
 Gutter marks and inline blame come from gitsigns; `<leader>gp` previews a hunk,
 `<leader>gd` opens a full side-by-side diff, `<leader>gh` the file's history.
 

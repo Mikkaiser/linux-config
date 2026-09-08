@@ -18,6 +18,9 @@ return {
     lazy = false, -- must be loaded at startup to intercept a directory argument
     keys = {
       { "<leader>e", "<cmd>Neotree toggle<CR>",                   desc = "Toggle file explorer" },
+      -- Focus without toggling: opens the tree if closed, moves the cursor
+      -- into it if it is already open. <leader>e would close it instead.
+      { "<leader>E", "<cmd>Neotree focus<CR>",                    desc = "Focus file explorer" },
       { "<C-b>",     "<cmd>Neotree toggle<CR>",                   desc = "Toggle sidebar" },
       { "<leader>g", "<cmd>Neotree git_status left<CR>",          desc = "Git changes panel" },
       { "<leader>bb","<cmd>Neotree buffers left<CR>",             desc = "Open buffers panel" },
