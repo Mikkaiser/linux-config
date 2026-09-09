@@ -197,6 +197,7 @@ backup_and_link "$DOTFILES_DIR/home/.profile"    "$HOME/.profile"
 backup_and_link "$DOTFILES_DIR/home/.bash_logout" "$HOME/.bash_logout"
 backup_and_link "$DOTFILES_DIR/home/.config/nvim"  "$HOME/.config/nvim"
 backup_and_link "$DOTFILES_DIR/home/.local/bin/dev" "$HOME/.local/bin/dev"
+backup_and_link "$DOTFILES_DIR/home/.local/bin/wl-paste" "$HOME/.local/bin/wl-paste"
 
 echo ""
 echo "Done. Restart your shell or run: source ~/.zshrc"

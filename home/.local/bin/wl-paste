@@ -1,0 +1,14 @@
+#!/bin/sh
+# Shim: WSLg exposes Windows clipboard images only as image/bmp, which Claude Code
+# cannot decode (it sniffs PNG/JPEG/GIF/WebP magic only) so the paste is dropped.
+# Hide image types from wl-paste so Claude Code falls through to its powershell.exe
+# fallback, which re-encodes the clipboard image as real PNG.
+# Delete this file to restore stock behaviour.
+REAL=/usr/bin/wl-paste
+for a in "$@"; do
+  case "$a" in
+    image/*) exit 1 ;;
+    -l|--list-types) "$REAL" "$@" | grep -v '^image/'; exit 0 ;;
+  esac
+done
+exec "$REAL" "$@"

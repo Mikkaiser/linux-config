@@ -15,12 +15,24 @@
             "keys": "ctrl+shift+f"
         },
         {
-            "id": "Terminal.PasteFromClipboard",
+            "id": null,
             "keys": "ctrl+v"
         },
         {
             "id": "Terminal.DuplicatePaneAuto",
             "keys": "alt+shift+d"
+        },
+        {
+            "id": "Terminal.IncreaseFontSize",
+            "keys": "ctrl+="
+        },
+        {
+            "id": "Terminal.DecreaseFontSize",
+            "keys": "ctrl+-"
+        },
+        {
+            "id": "Terminal.ResetFontSize",
+            "keys": "ctrl+0"
         }
     ],
     "newTabMenu": [

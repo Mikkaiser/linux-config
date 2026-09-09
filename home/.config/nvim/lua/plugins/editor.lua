@@ -117,12 +117,21 @@ return {
       { "<leader>fb", "<cmd>Telescope buffers<CR>",    desc = "Open buffers" },
       { "<leader>fh", "<cmd>Telescope help_tags<CR>",  desc = "Help tags" },
       { "<leader>fr", "<cmd>Telescope oldfiles<CR>",   desc = "Recent files" },
+      -- find_files hides dotfiles and obeys .gitignore. This one shows both,
+      -- for reaching things like .env or a build/ directory that is ignored.
+      {
+        "<leader>fa",
+        "<cmd>Telescope find_files hidden=true no_ignore=true<CR>",
+        desc = "Find files (incl. hidden + ignored)",
+      },
     },
     opts = {
       defaults = {
         layout_strategy = "horizontal",
         layout_config = { prompt_position = "top" },
         sorting_strategy = "ascending",
+        -- Without this, <leader>fa (no_ignore) buries the results in .git objects.
+        file_ignore_patterns = { "^%.git/" },
       },
     },
   },

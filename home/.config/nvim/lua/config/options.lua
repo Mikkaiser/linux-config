@@ -41,6 +41,22 @@ o.smartcase = true            -- ...unless the query contains a capital
 o.incsearch = true
 o.hlsearch = true
 
+-- --- Windows-style selection ---
+-- 'startsel' makes the shifted special keys (Shift+Arrow, Ctrl+Shift+Arrow,
+-- Shift+Home/End, Shift+PageUp/Down) begin a selection and extend it, from
+-- normal and insert mode alike. 'stopsel' ends the selection as soon as you
+-- press an unshifted movement key, the way every other editor behaves.
+-- selectmode is left empty on purpose: the shifted keys then start *Visual*
+-- mode rather than Select mode, so the existing visual bindings still apply
+-- (Ctrl+C to copy, Ctrl+X to cut, J/K to move the selection).
+o.keymodel = "startsel,stopsel"
+o.selectmode = ""
+
+-- Let Left/Right wrap across line boundaries, like a Windows text box.
+-- b,s = Backspace and Space; <,> = arrows in normal/visual; [,] = arrows in
+-- insert mode.
+o.whichwrap = "b,s,<,>,[,]"
+
 -- --- Timing ---
 o.updatetime = 250            -- faster diagnostics and gitsigns
 o.timeoutlen = 400

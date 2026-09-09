@@ -36,6 +36,10 @@ return {
         section_separators = "",
         component_separators = "|",
       },
+      sections = {
+        -- Standing reminder that the searchable keymap list exists.
+        lualine_z = { { function() return "  ? keys" end } },
+      },
     },
   },
 
@@ -62,6 +66,21 @@ return {
     -- discoverable instead of something you have to memorise.
     "folke/which-key.nvim",
     event = "VeryLazy",
-    opts = { preset = "helix" },
+    keys = {
+      -- Fuzzy-searchable list of every mapping: type "find files" to locate it.
+      { "<leader>?", "<cmd>Telescope keymaps<CR>", desc = "Search all keymaps" },
+      -- Same list as the popup, browsable rather than searchable.
+      { "<leader>K", "<cmd>WhichKey<CR>",          desc = "Show all keymaps" },
+    },
+    opts = {
+      preset = "helix",
+      -- Name the prefixes so the popup reads as menus instead of bare letters.
+      spec = {
+        { "<leader>f", group = "Find" },
+        { "<leader>b", group = "Buffer" },
+        { "<leader>m", group = "Move split" },
+        { "<leader>g", group = "Git" },
+      },
+    },
   },
 }
